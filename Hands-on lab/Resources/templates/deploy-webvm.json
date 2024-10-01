@@ -33,7 +33,7 @@
       }
     },
     "adminPassword": {
-      "type": "securestring"
+      "type": "securestring",
       "defaultValue": "Demo!pass123",
       "metadata": {
         "description": "The password for the administrator account of the new VMs"
