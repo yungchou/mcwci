@@ -20,6 +20,11 @@
             "metadata": { "description": "Size of Virtual Machines to use" },
             "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
          },
+         "zone": {
+            "defaultValue": "2",
+            "type": "array",
+            "allowedValues": [ "1","2","3" ]
+         },
         "adminUsername": {
             "type": "string",
             "defaultValue": "adadmin",
@@ -57,7 +62,10 @@
         "DataSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Data')]",
         "ADSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Identity')]",
         "ADVMPrivateIPAddress": "[concat('10.',variables('stub'),'.3.101')]",
-        "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'.2.100')]"
+        "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'.2.100')]",
+        "DCVMName": "[concat('ci',variabes('stub'),'-DC2')]",
+        "IISVMName": "[concat('ci',variabes('stub'),'-IIS2')]",
+        "SQLVMName": "[concat('ci',variabes('stub'),'-SQL2')]"
     },
     "resources": [
         {
@@ -83,10 +91,10 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "ADVMName": {
-                        "value": "ci-DC2"
+                        "value": "[variables('DCVMName')]"
                     },
                     "AvailabilityZone": {
-                        "value": "2"
+                        "value": "[parameters('zone')]"
                     },
                     "ADSubnetId": {
                         "value": "[variables('ADSubnetId')]"
@@ -181,10 +189,10 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "WebVMName": {
-                        "value": "ci-IIS2"
+                        "value": "[variables('IISVMName')]"
                     },
                     "AvailabilityZone": {
-                        "value": "2"
+                        "value": "[parameters('zone')]"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -199,7 +207,7 @@
                         "value": false
                     },
                     "SQLEndpoint": {
-                        "value": "ci-SQL1"
+                        "value": "[variables('SQLVMName')]"
                     },
                     "domainToJoin": {
                         "value": "[parameters('domainName')]"
@@ -230,10 +238,10 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "SqlVMName": {
-                        "value": "ci-SQL2"
+                        "value": "[variables('SQLVMName')]"
                     },
                     "AvailabilityZone": {
-                        "value": "2"
+                        "value": "[parameters('zone')]"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"

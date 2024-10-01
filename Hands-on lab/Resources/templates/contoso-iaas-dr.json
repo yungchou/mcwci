@@ -13,6 +13,11 @@
             "metadata": { "description": "Size of Virtual Machines to use" },
             "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
          },
+         "zone": {
+            "defaultValue": "1",
+            "type": "array",
+            "allowedValues": [ "1","2","3" ]
+         },
         "adminUsername": {
             "type": "string",
             "defaultValue": "adadmin",
@@ -72,7 +77,13 @@
         "stub": "[parameters('sessionID')]",
         "vnetNamePrimary": "[parameters('existingPrimaryVnet')]",
         "vnetNameSecondary": "[concat('vnet-',variables('stub'))]",
-        "DNSIPs": "[parameters('existingDNSIPs')]" 
+        "DNSIPs": "[parameters('existingDNSIPs')]",
+        "DC3VMName": "[concat('ci',variabes('stub'),'-DC3')]",
+        "DC4VMName": "[concat('ci',variabes('stub'),'-DC4')]",
+        "SQL3VMName": "[concat('ci',variabes('stub'),'-SQL3')]",
+        "ADVM3PrivateIPAddress" : "[concat('10.',variables('stub'),'3.100')]",
+        "ADVM4PrivateIPAddress" : "[concat('10.',variables('stub'),'3.101')]",
+        "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'2.100')]"
     },
     "resources": [
         {
@@ -162,16 +173,16 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "ADVMName": {
-                        "value": "ci-DC3"
+                        "value": "[variables('DC3VMName')]"
                     },
                     "AvailabilityZone": {
-                        "value": "1"
+                        "value": "[parameters('zone')]"
                     },
                     "ADSubnetId": {
                         "value": "[reference('VirtualNetworkSecondary').outputs.ADSubnetId.value]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.252.3.100"
+                        "value": "[variables('ADVM3PrivateIPAddress')]"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -213,16 +224,16 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "ADVMName": {
-                        "value": "ci-DC4"
+                        "value": "[variables('DC4VMName')]"
                     },
                     "AvailabilityZone": {
-                        "value": "2"
+                        "value": "[parameters('zone')]"
                     },
                     "ADSubnetId": {
                         "value": "[reference('VirtualNetworkSecondary').outputs.ADSubnetId.value]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.252.3.101"
+                        "value": "[variables('ADVM4PrivateIPAddress')]"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -260,8 +271,9 @@
                     },
                     "DNSIPs": {
                         "value": [
-                            "10.252.3.100",
-                            "10.252.3.101"
+                            "[variables('ADVM3PrivateIPAddress')]",
+                            "[variables('ADVM3PrivateIPAddress')]"
+
                         ]
                     }
                 }
@@ -287,8 +299,7 @@
                     "DataSubnetId": {
                         "value": "[reference('VirtualNetworkSecondary').outputs.DataSubnetId.value]"
                     },
-                    "SQLLBPrivateIPAddress": {
-                        "value": "10.252.2.100"
+                    "SQLLBPrivateIPAddress": { "value": "[variables('SQLLBPrivateIPAddress')]"
                     }
                 }
             }
@@ -318,10 +329,10 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "SqlVMName": {
-                        "value": "ci-SQL3"
+                        "value": "[variables('SQL3VMName')]"
                     },
                     "AvailabilityZone": {
-                        "value": "1"
+                        "value": "[parameters('zone')]"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
