@@ -138,7 +138,7 @@
             }
         },
         {
-            "name": "IISVM1",
+            "name": "WebVM1",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "dependsOn": [
@@ -160,7 +160,7 @@
                     "resourceFolder": {
                         "value": "[parameters('resourceFolder')]"
                     },
-                    "IISVMName": {
+                    "WebVMName": {
                         "value": "ci-IIS1"
                     },
                     "AvailabilityZone": {

@@ -159,7 +159,7 @@
             }
         },
         {
-            "name": "IISVM2",
+            "name": "WebVM2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "dependsOn": [
@@ -180,7 +180,7 @@
                     "resourceFolder": {
                         "value": "[parameters('resourceFolder')]"
                     },
-                    "IISVMName": {
+                    "WebVMName": {
                         "value": "ci-IIS2"
                     },
                     "AvailabilityZone": {

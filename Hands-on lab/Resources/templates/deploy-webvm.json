@@ -8,9 +8,9 @@
             "metadata": { "description": "Size of Virtual Machines to use" },
             "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
          },
-    "IISVMName": {
+    "WebVMName": {
       "type": "string",
-      "defaultValue": "IISVM1",
+      "defaultValue": "WebVM1",
       "minLength": 1
     },
     "AvailabilityZone": {
@@ -80,13 +80,13 @@
     "WebScriptFileName": "deploy-WebVM.ps1",
     "WebScriptParameters": "[concat(' -zipurl ', variables('WebDownloadUrl'), ' -datasource ', parameters('SQLEndpoint'), '.', parameters('domainToJoin'), ' -password ', parameters('adminPassword'))]",
     "WebScriptDownload": "[concat('powershell -ExecutionPolicy Unrestricted \"[Net.ServicePointManager]::SecurityProtocol = ''Tls12''; Invoke-WebRequest -uri ', variables('WebScriptUrl') ,' -OutFile ', variables('WebScriptFileName'), ' \"')]",
-    "IISVMImagePublisher": "MicrosoftWindowsServer",
-    "IISVMImageOffer": "WindowsServer",
+    "WebVMImagePublisher": "MicrosoftWindowsServer",
+    "WebVMImageOffer": "WindowsServer",
     "WebSKU": "2022-Datacenter",
-    "IISVMSize": "[concat('Standard_',parameters('skuSizeVM'))]",
-    "IISVMNicName": "[concat(parameters('IISVMName'), 'NIC')]",
-    "IISVMOSDiskName": "[concat(parameters('IISVMName'), '-OSDisk')]",
-    "IISVMIPName": "[concat(parameters('IISVMName'), 'IP')]",
+    "WebVMSize": "[concat('Standard_',parameters('skuSizeVM'))]",
+    "WebVMNicName": "[concat(parameters('WebVMName'), 'NIC')]",
+    "WebVMOSDiskName": "[concat(parameters('WebVMName'), '-OSDisk')]",
+    "WebVMIPName": "[concat(parameters('WebVMName'), 'IP')]",
     "DiskType": "Premium_LRS",
     "domainOUPath": "",
     "domainJoinOptions": 3
@@ -94,7 +94,7 @@
   "resources": [
     {
       "condition": "[parameters('publicIP')]",
-      "name": "[variables('IISVMIPName')]",
+      "name": "[variables('WebVMIPName')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "location": "[resourceGroup().location]",
       "apiVersion": "2019-12-01",
@@ -112,12 +112,12 @@
       }
     },
     {
-      "name": "[variables('IISVMNicName')]",
+      "name": "[variables('WebVMNicName')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
       "dependsOn": [
-        "[variables('IISVMIPName')]"
+        "[variables('WebVMIPName')]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -128,41 +128,41 @@
               "subnet": {
                 "id": "[parameters('AppsSubnetId')]"
               },
-              "publicIPAddress": "[if(parameters('publicIP'), json(concat('{\"id\": \"', resourceId('Microsoft.Network/publicIPAddresses', variables('IISVMIPName')), '\"')), json('null'))]"
+              "publicIPAddress": "[if(parameters('publicIP'), json(concat('{\"id\": \"', resourceId('Microsoft.Network/publicIPAddresses', variables('WebVMIPName')), '\"')), json('null'))]"
             }
           }
         ]
       }
     },
     {
-      "name": "[parameters('IISVMName')]",
+      "name": "[parameters('WebVMName')]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[resourceGroup().location]",
       "apiVersion": "2019-03-01",
       "dependsOn": [
-        "[variables('IISVMNicName')]"
+        "[variables('WebVMNicName')]"
       ],
       "zones": [
         "[parameters('AvailabilityZone')]"
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('IISVMSize')]"
+          "vmSize": "[variables('WebVMSize')]"
         },
         "osProfile": {
-          "computerName": "[parameters('IISVMName')]",
+          "computerName": "[parameters('WebVMName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[variables('IISVMImagePublisher')]",
-            "offer": "[variables('IISVMImageOffer')]",
+            "publisher": "[variables('WebVMImagePublisher')]",
+            "offer": "[variables('WebVMImageOffer')]",
             "sku": "[variables('WebSKU')]",
             "version": "latest"
           },
           "osDisk": {
-            "name": "[variables('IISVMOSDiskName')]",
+            "name": "[variables('WebVMOSDiskName')]",
             "caching": "ReadWrite",
             "createOption": "FromImage",
             "managedDisk": {
@@ -173,7 +173,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('IISVMNicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('WebVMNicName'))]"
             }
           ]
         },
@@ -187,7 +187,7 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2019-03-01",
           "dependsOn": [
-            "[parameters('IISVMName')]"
+            "[parameters('WebVMName')]"
           ],
           "properties": {
             "publisher": "Microsoft.Compute",
@@ -205,8 +205,8 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
           "dependsOn": [
-            "[parameters('IISVMName')]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('IISVMName'), 'InstallWebApp')]"
+            "[parameters('WebVMName')]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('WebVMName'), 'InstallWebApp')]"
           ],
           "properties": {
             "publisher": "Microsoft.Compute",
