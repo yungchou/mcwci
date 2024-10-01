@@ -22,7 +22,7 @@
          },
          "zone": {
             "defaultValue": "2",
-            "type": "array",
+            "type": "string",
             "allowedValues": [ "1","2","3" ]
          },
         "adminUsername": {
@@ -63,9 +63,9 @@
         "ADSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Identity')]",
         "ADVMPrivateIPAddress": "[concat('10.',variables('stub'),'.3.101')]",
         "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'.2.100')]",
-        "DCVMName": "[concat('ci',variabes('stub'),'-DC2')]",
-        "IISVMName": "[concat('ci',variabes('stub'),'-IIS2')]",
-        "SQLVMName": "[concat('ci',variabes('stub'),'-SQL2')]"
+        "DCVMName": "[concat('ci',variabes('stub'),'-DC',parameters('zone))]",
+        "IISVMName": "[concat('ci',variabes('stub'),'-IIS',parameters('zone))]",
+        "SQLVMName": "[concat('ci',variabes('stub'),'-SQL',parameters('zone))]"
     },
     "resources": [
         {

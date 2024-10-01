@@ -15,8 +15,8 @@
          },
          "zone": {
             "defaultValue": "1",
-            "type": "array",
-            "allowedValues": [ "1","2","3" ]
+            "type": "string",
+            "allowedValues": [ "1","3" ]
          },
         "adminUsername": {
             "type": "string",
@@ -78,9 +78,9 @@
         "vnetNamePrimary": "[parameters('existingPrimaryVnet')]",
         "vnetNameSecondary": "[concat('vnet-',variables('stub'))]",
         "DNSIPs": "[parameters('existingDNSIPs')]",
-        "DC3VMName": "[concat('ci',variabes('stub'),'-DC3')]",
-        "DC4VMName": "[concat('ci',variabes('stub'),'-DC4')]",
-        "SQL3VMName": "[concat('ci',variabes('stub'),'-SQL3')]",
+        "DC3VMName": "[concat('ci',variabes('stub'),'-DC',parameters('zone))]",
+        "DC4VMName": "[concat('ci',variabes('stub'),'-DC2')]",
+        "SQL3VMName": "[concat('ci',variabes('stub'),'-SQL',parameters('zone))]",
         "ADVM3PrivateIPAddress" : "[concat('10.',variables('stub'),'3.100')]",
         "ADVM4PrivateIPAddress" : "[concat('10.',variables('stub'),'3.101')]",
         "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'2.100')]"
@@ -227,7 +227,7 @@
                         "value": "[variables('DC4VMName')]"
                     },
                     "AvailabilityZone": {
-                        "value": "[parameters('zone')]"
+                        "value": "2"
                     },
                     "ADSubnetId": {
                         "value": "[reference('VirtualNetworkSecondary').outputs.ADSubnetId.value]"
