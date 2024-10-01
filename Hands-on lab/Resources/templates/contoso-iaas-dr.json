@@ -78,9 +78,9 @@
         "vnetNamePrimary": "[parameters('existingPrimaryVnet')]",
         "vnetNameSecondary": "[concat('vnet-',variables('stub'))]",
         "DNSIPs": "[parameters('existingDNSIPs')]",
-        "DC3VMName": "[concat('ci',variabes('stub'),'-DC',parameters('zone))]",
+        "DC3VMName": "[concat('ci',variabes('stub'),'-DC',parameters('zone'))]",
         "DC4VMName": "[concat('ci',variabes('stub'),'-DC2')]",
-        "SQL3VMName": "[concat('ci',variabes('stub'),'-SQL',parameters('zone))]",
+        "SQL3VMName": "[concat('ci',variabes('stub'),'-SQL',parameters('zone'))]",
         "ADVM3PrivateIPAddress" : "[concat('10.',variables('stub'),'3.100')]",
         "ADVM4PrivateIPAddress" : "[concat('10.',variables('stub'),'3.101')]",
         "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'2.100')]"
