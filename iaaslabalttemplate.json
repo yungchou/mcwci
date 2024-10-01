@@ -11,7 +11,7 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "Demo!pass123",
+            "defaultValue": "??????????",
             "metadata": {
                 "description": "The password for the administrator account of the new VM and domain"
             }
@@ -108,8 +108,8 @@
                     },
                     "DNSIPs": {
                         "value": [
-                            "10.0.3.100",
-                            "10.0.3.101"
+                            "10.252.3.100",
+                            "10.252.3.101"
                         ]
                     }
                 }

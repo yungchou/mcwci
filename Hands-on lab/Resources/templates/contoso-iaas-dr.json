@@ -3,17 +3,11 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "skuSizeVM": {
-            "defaultValue": "D2s_v3",
+            "defaultValue": "E2bds_v5",
             "type": "string",
-            "metadata": {
-                "description": "Size of Virtual Machines to use"
-            },
-            "allowedValues": [
-                "D2s_v3",
-                "D2s_v5",
-                "DC2s_v3"
-            ]
-        },
+            "metadata": { "description": "Size of Virtual Machines to use" },
+            "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
+         },
         "adminUsername": {
             "type": "string",
             "defaultValue": "adadmin",
@@ -51,11 +45,11 @@
         },
         "baseUri": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/microsoft/MCW-Building-a-resilient-IaaS-architecture/"
+            "defaultValue": "https://raw.githubusercontent.com/yungchou/mcwci/"
         },
         "resourceFolder": {
             "type": "string",
-            "defaultValue": "master/Hands-on%20lab/Resources/"
+            "defaultValue": "main/Hands-on%20lab/Resources/"
         }
     },
     "variables": {
@@ -127,8 +121,8 @@
                     },
                     "DNSIPs": {
                         "value": [
-                            "10.0.3.100",
-                            "10.0.3.101"
+                            "10.252.3.100",
+                            "10.252.3.101"
                         ]
                     }
                 }
