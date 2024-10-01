@@ -17,7 +17,7 @@
     }
   },
   "variables": {
-    "NSGName": "AppsNSG-33",
+    "NSGName": "AppsNSG-248",
     "NATName": "[concat(parameters('VNetName'), '-NAT')]",
     "NATIPName": "[concat(variables('NATName'), '-PIP')]",
     "VNetPrefix": "10.248.0.0/16",
