@@ -153,7 +153,7 @@
             }
         },
         {
-            "name": "WebVM2",
+            "name": "IISVM2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "dependsOn": [
@@ -161,7 +161,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-webvm.json')]",
+                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-IISVM.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -174,8 +174,8 @@
                     "resourceFolder": {
                         "value": "[parameters('resourceFolder')]"
                     },
-                    "WebVMName": {
-                        "value": "WebVM2"
+                    "IISVMName": {
+                        "value": "IISVM2"
                     },
                     "AvailabilityZone": {
                         "value": "2"

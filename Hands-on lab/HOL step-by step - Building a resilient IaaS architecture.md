@@ -73,7 +73,7 @@ Contoso has asked you to deploy their infrastructure in a resilient manner to en
 
 ## Solution architecture
 
-The following diagram shows the highly resilient application architecture you will build in this lab. Starting with just WebVM1, SQLVM1 and DCVM1, you will first build out a fully-redundant, high-availability environment in Central US. You will then extend this environment to a disaster recovery site in East US 2 and add a backup solution for both the web tier and database tier.
+The following diagram shows the highly resilient application architecture you will build in this lab. Starting with just IISVM1, SQLVM1 and DCVM1, you will first build out a fully-redundant, high-availability environment in Central US. You will then extend this environment to a disaster recovery site in East US 2 and add a backup solution for both the web tier and database tier.
 
 ![Diagram showing the DR design for the Ordering application. Two sites, Central US and East US, each show the application footprint, each with web VMs, SQL VMs, and domain controller VMs separated into availability zones within each site. Failover for the web VMs is shown using Azure Site Recovery. Failover for the SQL VMs is shown via SQL Server asynchronous replication. The Domain Controller VMs are running active-active.](images/solution-dr2.png "Solution architecture")
 
@@ -128,7 +128,7 @@ A template will be used to save time. You will configure each tier in subsequent
 
     - The ADVM2 virtual machine, which will be a second Domain Controller.
     - The SQLVM2 virtual machine, which will be a second SQL Server.
-    - The WebVM2 virtual machine, which will be a second web server.
+    - The IISVM2 virtual machine, which will be a second web server.
     - Two load balancers, one for the web tier and one for the SQL tier.
     - The virtual network with the proper DNS configuration in place.
 
@@ -151,7 +151,7 @@ In this task, you will reboot all the servers to ensure they have the latest DNS
 
 1. Restart the **ADVM1** and **ADVM2** virtual machines in the **ContosoRG1** resource group, so they pick up the new DNS server settings.
 
-2. Wait for a minute or two for the domain controller VMs to boot fully, then restart the **WebVM1**, **WebVM2**, **SQLVM1**, and **SQLVM2** virtual machines, so they also pick up the new DNS server settings.
+2. Wait for a minute or two for the domain controller VMs to boot fully, then restart the **IISVM1**, **IISVM2**, **SQLVM1**, and **SQLVM2** virtual machines, so they also pick up the new DNS server settings.
 
 ### Task 3: Configure HA for the SQL Server tier
 
@@ -425,12 +425,12 @@ You have now successfully set up the SQL Server VMs to use Always On Availabilit
 
 In this task, you will configure a high-availability web tier. This comprises two web server VMs, which you will locate behind an Azure load balancer. You will also configure the VMs to access the database using the Always On Availability Group endpoint you created earlier.
 
-1. In the Azure portal, navigate to **WebVM1**, select **Connect** followed by **Bastion**, and connect to the VM using the following credentials:
+1. In the Azure portal, navigate to **IISVM1**, select **Connect** followed by **Bastion**, and connect to the VM using the following credentials:
 
     - **Username**: `adadmin@contoso.ins`
     - **Password**: `Demo!pass123`
 
-2. In **WebVM1**, open Windows Explorer, navigate to **C:\inetpub\wwwroot** and open the **Web.config** file using Notepad.
+2. In **IISVM1**, open Windows Explorer, navigate to **C:\inetpub\wwwroot** and open the **Web.config** file using Notepad.
 
     > **Note**: If the **Web.config** change does not run, go to **Start**, **Run** and type **iisreset /restart** from command line.
 
@@ -438,7 +438,7 @@ In this task, you will configure a high-availability web tier. This comprises tw
 
     ![Notepad is editing the web.config file. The data source is updated to BCDRAOG.contoso.ins.](images/ha-webconfig.png "Web.config file")
 
-4. Repeat the above steps to make the same change on **WebVM2**.
+4. Repeat the above steps to make the same change on **IISVM2**.
 
 5. Return to the Azure portal and navigate to the **ContosoWebLBPrimary** load balancer blade. Select **Backend pools** and open **BackEndPool1**.
 
@@ -446,7 +446,7 @@ In this task, you will configure a high-availability web tier. This comprises tw
 
 6. In the **BackendPool1** blade, select **VNet1 (ContosoRG1)** as the Virtual network. Then select **+ Add** and select the two web VMs. Select **Save**.
 
-    ![Azure portal showing WebVM1 and WebVM2 being added to the backend pool.](images/ha-web-poolvms.png "Backend pool VMs")
+    ![Azure portal showing IISVM1 and IISVM2 being added to the backend pool.](images/ha-web-poolvms.png "Backend pool VMs")
 
 7. You will now check that the Contoso sample application is working when accessed through the load-balancer. In the Azure portal, navigate to the **ContosoWebLBPrimaryIP** resource. This is the public IP address attached to the web tier load balancer front end. Copy the **DNS name** to the clipboard.
 
@@ -815,9 +815,9 @@ Custom scripts in Azure Automation are called by Azure Site recovery to add the 
 
     ![In the Source blade, fields are set to the previously defined settings.](images/dr-asr-2.png "Source blade")
 
-4. On **Step 2 - Virtual Machines**, select **WebVM1** and **WebVM2** and then select **Next**.
+4. On **Step 2 - Virtual Machines**, select **IISVM1** and **IISVM2** and then select **Next**.
 
-    ![In the Select virtual machines blade, the checkboxes for WebVM1 and WebVM2 are selected.](images/dr-asr-3.png "Select virtual machines blade")
+    ![In the Select virtual machines blade, the checkboxes for IISVM1 and IISVM2 are selected.](images/dr-asr-3.png "Select virtual machines blade")
 
 5. On the **Replication settings** tab, select the **Target location** as **East US 2** (or what you selected as your secondary site Azure region). Then, in the 'Resource group, Network, Storage and Availability' section, select **Customize**.
 
@@ -864,7 +864,7 @@ Custom scripts in Azure Automation are called by Azure Site recovery to add the 
     - **Source**: Central US *(This is your primary region.)*
     - **Target**: East US 2 *(This is your secondary region.)*
     - **Allow items with deployment model**: Resource Manager
-    - **Select Items**: Select **WebVM1** and **WebVM2**.
+    - **Select Items**: Select **IISVM1** and **IISVM2**.
 
     ![Fields in the Create recovery plan blade are set to the previously defined settings.](images/dr-asr-10a.png "Create recovery plan blade")
 
@@ -910,9 +910,9 @@ Custom scripts in Azure Automation are called by Azure Site recovery to add the 
 
     ![The Updating recovery plan message shows that the update was successfully completed.](images/image253.png "Updating recovery plan message")
 
-23. Return to the Recovery Services Vault **BCDRRSV** blade and select the **Replicated Items** link under **Protected Items**. You should see **WebVM1** and **WebVM2**. The Replication Health should be **Healthy**. The Status will show the replication progress. Once both VMs show status **Protected** replication is complete, you will be able to test the failover.
+23. Return to the Recovery Services Vault **BCDRRSV** blade and select the **Replicated Items** link under **Protected Items**. You should see **IISVM1** and **IISVM2**. The Replication Health should be **Healthy**. The Status will show the replication progress. Once both VMs show status **Protected** replication is complete, you will be able to test the failover.
 
-    ![Under Replicated Items, the status for WebVM1 is 97% Synchronized and WebVM2 is now Protected.](images/dr-asr-18.png "Replicated Items")
+    ![Under Replicated Items, the status for IISVM1 is 97% Synchronized and IISVM2 is now Protected.](images/dr-asr-18.png "Replicated Items")
 
     > **Note**: It can take up to 30 minutes for the replication to complete.
 
@@ -1001,13 +1001,13 @@ In this task, you will use the Front Door approach to configure a highly availab
 
     ![Create a front door profile screen completed and ready to create. Completed route and Review + Create are highlighted.](images/dr-fd-profile.png "Create a front door profile completed and ready to create")
 
-15. Navigate to the Azure Front Door resource. Select the **Frontend host** URL of Azure Front Door, and the Policy Connect web application will load. The web application is routing through the **ContosoWebLBPrimary** External Load Balancer configured in front of **WEBVM1** and **WEBVM2** running in the **Primary** Site in **ContosoRG1** resource group and connecting to the SQL AlwaysOn Listener at the same location.
+15. Navigate to the Azure Front Door resource. Select the **Frontend host** URL of Azure Front Door, and the Policy Connect web application will load. The web application is routing through the **ContosoWebLBPrimary** External Load Balancer configured in front of **IISVM1** and **IISVM2** running in the **Primary** Site in **ContosoRG1** resource group and connecting to the SQL AlwaysOn Listener at the same location.
 
     ![The Frontend host link is selected from the Azure Front Door.](images/dr-fd.png "Frontend host link")
 
     ![The Contoso Insurance PolicyConnect webpage displays from a Front Door URL.](images/dr-fd-app.png "Contoso Insurance PolicyConnect webpage")
 
-    > **Note**: Be sure to use **HTTP** to access the Azure Front Door **frontend host** URL. The lab configurations only support HTTP for Front Door since WebVM1 and WebVM2 are only set up for HTTP support, not HTTPS (no SSL\TLS).
+    > **Note**: Be sure to use **HTTP** to access the Azure Front Door **frontend host** URL. The lab configurations only support HTTP for Front Door since IISVM1 and IISVM2 are only set up for HTTP support, not HTTPS (no SSL\TLS).
     > **Note**: If you get an "Our services aren't available right now" error (or a 404-type error) accessing the web application, then continue with the lab and come back to this later. Sometime this can take a ~10 minutes for the routing rules to publish before it's "live".
     >
     > If you continue to have this issue beyond 15 minutes, ensure that you are using the correct backend host header (Step 5) and using HTTP for both the routing rules and the health probes of the backend pools. (Step 4).
@@ -1062,7 +1062,7 @@ In this task, you will configure Azure Backup for the Web tier virtual machines.
 
 2. On the 'Configure Backup' blade, Leave **Standard** selected and select **Create a new policy** and fill in the Create Policy blade as follows:
 
-    - **Policy name**: `WebVMPolicy`
+    - **Policy name**: `IISVMPolicy`
     - **Backup schedule**: Daily, 9:00 PM, UTC
     - **Retain instant recovery snapshots for**: 2 day(s)
     - **Retention of daily backup point**: Enabled, 180 days
@@ -1075,7 +1075,7 @@ In this task, you will configure Azure Backup for the Web tier virtual machines.
 
     ![Azure portal screenshot showing the Backup Policy settings, completed as described.](images/bk-vm2.png "Backup Policy")
 
-3. On the 'Backup' blade, under 'Virtual Machines', select **Add**. Select the **WebVM1** and **WebVM2** virtual machines, then **OK**.
+3. On the 'Backup' blade, under 'Virtual Machines', select **Add**. Select the **IISVM1** and **IISVM2** virtual machines, then **OK**.
 
     ![Azure portal screenshot showing the steps to add VMs to the backup.](images/bk-vm3.png "Add VMs")
 
@@ -1087,27 +1087,27 @@ In this task, you will configure Azure Backup for the Web tier virtual machines.
 
     ![Azure portal screenshot showing how many protected items of various types are enabled. There are 2 Azure VMs protected.](images/bk-vm5.png "Backup items")
 
-6. Select **Azure Virtual Machine**. The 'Backup Items (Azure Virtual Machine' blade loads, listing **WebVM1** and **WebVM2**). In both cases, the 'Last Backup Status is 'Warning (Initial backup pending)'.
+6. Select **Azure Virtual Machine**. The 'Backup Items (Azure Virtual Machine' blade loads, listing **IISVM1** and **IISVM2**). In both cases, the 'Last Backup Status is 'Warning (Initial backup pending)'.
 
-    ![Azure portal screenshot showing WebVM1 and WebVM2 listed for backup, with initial backup pending.](images/bk-vm6.png "Backup items (Azure Virtual Machine)")
+    ![Azure portal screenshot showing IISVM1 and IISVM2 listed for backup, with initial backup pending.](images/bk-vm6.png "Backup items (Azure Virtual Machine)")
 
-7. Select **View details** for **WebVM1** to open the 'WebVM1' backup status blade. Select **Backup now**, leave the default backup retention and select **OK**.
+7. Select **View details** for **IISVM1** to open the 'IISVM1' backup status blade. Select **Backup now**, leave the default backup retention and select **OK**.
 
-    ![Azure portal screenshot showing the WebVM1 backup status blade, with the 'Backup now' button highlighted.](images/bk-vm7.png "Backup now")
+    ![Azure portal screenshot showing the IISVM1 backup status blade, with the 'Backup now' button highlighted.](images/bk-vm7.png "Backup now")
 
     ![Azure portal screenshot of the backup retention period for the on-demand backup.](images/bk-vm8.png "Backup now - retention")
 
     >**Note**: The backup policy created earlier determines the retention period for scheduled backups. For on-demand backups, the retention period is specified separately.
 
-8. Close the WebVM1 backup status blade. Then, repeat the above step to trigger an on-demand backup for **WebVM2**.
+8. Close the IISVM1 backup status blade. Then, repeat the above step to trigger an on-demand backup for **IISVM2**.
 
-9. From the **BackupRSV** Recovery Services vault blade, under 'Monitoring', select **Backup Jobs** to load the Backup Jobs blade. This blade shows the current status of each backup job. The blade should show two completed jobs (configuring backup for WebVM1 and WebVM2) and two in-progress jobs (backup for WebVM1 and WebVM2).
+9. From the **BackupRSV** Recovery Services vault blade, under 'Monitoring', select **Backup Jobs** to load the Backup Jobs blade. This blade shows the current status of each backup job. The blade should show two completed jobs (configuring backup for IISVM1 and IISVM2) and two in-progress jobs (backup for IISVM1 and IISVM2).
 
     ![Azure portal screenshot showing the backup jobs.](images/bk-vm9.png "Backup Jobs")
 
-10. Select **View Details** for **WebVM1** to open the backup job view. This backup job view shows the detailed status of the tasks within the backup job.
+10. Select **View Details** for **IISVM1** to open the backup job view. This backup job view shows the detailed status of the tasks within the backup job.
 
-    ![Azure portal screenshot showing the WebVM1 backup job detailed status. The 'Take snapshot' task is 'In progress', and the 'Transfer data to vault' task is 'Not started'.](images/bk-vm10.png "Backup Job - WebVM1")
+    ![Azure portal screenshot showing the IISVM1 backup job detailed status. The 'Take snapshot' task is 'In progress', and the 'Transfer data to vault' task is 'Not started'.](images/bk-vm10.png "Backup Job - IISVM1")
 
     > **Note**: To restore from a backup, it suffices that the 'Take Snapshot' task is complete. Transferring the data to the vault does not need to be complete since recent backups can be restored from the snapshot.
 
@@ -1240,7 +1240,7 @@ In this task, we will validate high availability for both the Web and SQL tiers.
 
    ![SQL Server Management Studio screenshot showing SQLVM1 as the primary replica.](images/v-sql1.png "SQLVM1 as Primary")
 
-4. Using the Azure portal, stop both **WebVM1** and **SQLVM1**. Wait a minute for the VMs to stop.
+4. Using the Azure portal, stop both **IISVM1** and **SQLVM1**. Wait a minute for the VMs to stop.
 
 5. Refresh the browser tab with the Contoso application. The application still works. Confirm again that the database is writable by changing one of the policies.
 
@@ -1248,7 +1248,7 @@ In this task, we will validate high availability for both the Web and SQL tiers.
 
    ![SQL Server Management Studio screenshot showing SQLVM2 as the primary replica, with warnings.](images/v-sql2.png "SQLVM2 as Primary")
 
-7. Restart **WebVM1** and **SQLVM1**. **Wait a full two minutes** for the VMs to start - **this is important**; we don't want to test simultaneous failover of SQLVM1 and SQLVM2 at this stage. Then stop **WebVM2** and **SQLVM2**.
+7. Restart **IISVM1** and **SQLVM1**. **Wait a full two minutes** for the VMs to start - **this is important**; we don't want to test simultaneous failover of SQLVM1 and SQLVM2 at this stage. Then stop **IISVM2** and **SQLVM2**.
 
 8. Refresh the blade with the Contoso application. The application still works. Confirm again that the database is writable by changing one of the policies.
 
@@ -1256,7 +1256,7 @@ In this task, we will validate high availability for both the Web and SQL tiers.
 
     ![SQL Server Management Studio screenshot showing SQLVM1 as the primary replica, with warnings.](images/v-sql1b.png "SQLVM1 as Primary")
 
-10. Re-start **SQLVM2** and **WebVM2**.
+10. Re-start **SQLVM2** and **IISVM2**.
 
 ### Task 2: Validate Disaster Recovery - Failover IaaS region to region
 
@@ -1302,7 +1302,7 @@ In this task, you will validate the failover of the Contoso application from Cen
 
     ![Under the Site Recovery Job, the status for the job steps all show as successful.](images/v-dr8.png "Job status")
 
-10. Select **Resource groups** and select **ContosoRG1**. Open **WebVM1** and notice that it currently shows as **Status: Stopped (deallocated).** This shows that failover automation has stopped the VMs at the **Primary** site.
+10. Select **Resource groups** and select **ContosoRG1**. Open **IISVM1** and notice that it currently shows as **Status: Stopped (deallocated).** This shows that failover automation has stopped the VMs at the **Primary** site.
 
     ![A call out points to the Status of Stopped (deallocated) in the Virtual machine blade. The VM location is Central US.](images/v-dr9.png "Virtual machine blade")
 
@@ -1310,9 +1310,9 @@ In this task, you will validate the failover of the Contoso application from Cen
 
 11. Move back to the Resource group and select the **ContosoWebLBPrimaryIP** Public IP address. Copy the DNS name and paste it into a new browser tab. The website will be unreachable at the Primary location since the Web VMs at this location have been stopped by ASR during failover.
 
-12. In the Azure portal, move to the **ContosoRG2** resource group. Locate the **WebVM1** in the resource group and select to open. Notice that **WebVM1** is running on the **Secondary** site.
+12. In the Azure portal, move to the **ContosoRG2** resource group. Locate the **IISVM1** in the resource group and select to open. Notice that **IISVM1** is running on the **Secondary** site.
 
-    ![In the Virtual Machine blade, a call out points to the status of WebVM1, which is now running.](images/v-dr10.png "Virtual Machine blade")
+    ![In the Virtual Machine blade, a call out points to the status of IISVM1, which is now running.](images/v-dr10.png "Virtual Machine blade")
 
 13. Move back to the **ContosoRG2** resource group and select the **ContosoWebLBSecondaryIP** Public IP address. Copy the DNS name and paste it into a new browser tab. The Contoso application is now responding from the **Secondary** site. Make sure to select the current Policy Offerings to ensure connectivity to the SQL Always-On group that was also failed over in the background.
 
@@ -1338,15 +1338,15 @@ In this task, you will validate the failover of the Contoso application from Cen
 
     ![Screenshot of the Re-protect blade.](images/v-dr14.png "Re-protect blade")
 
-19. The portal will submit a deployment. This process will take up to 30 minutes to commit the failover and then synchronize WebVM1 and WebVM2 with the Recovery Services Vault. Once this process is complete, you will be able to failback to the primary site.
+19. The portal will submit a deployment. This process will take up to 30 minutes to commit the failover and then synchronize IISVM1 and IISVM2 with the Recovery Services Vault. Once this process is complete, you will be able to failback to the primary site.
 
     > **Note**: You need to wait for the re-protect process to complete before continuing with the failback. You can check the status of the Re-protect using the Site Recovery Jobs area of the BCDRSRV.
     >
-    > ![In the Recovery blade, Re-protect has a status of In progress for two jobs, one for WebVM1 and one for WebVM2.](images/v-dr15.png "Site Recovery jobs")
+    > ![In the Recovery blade, Re-protect has a status of In progress for two jobs, one for IISVM1 and one for IISVM2.](images/v-dr15.png "Site Recovery jobs")
     >
     > Once the jobs are completed, move to the **Replicated items** blade and wait for the **Status** to show as **Protected**. This status shows the data synchronization is complete, and the Web VMs are ready to failback.
     >
-    > ![In the Replicated items, WebVM1 and WebVM2 have status 'Protected'.](images/v-dr16.png "Replicated items")
+    > ![In the Replicated items, IISVM1 and IISVM2 have status 'Protected'.](images/v-dr16.png "Replicated items")
 
 ### Task 3: Validate Disaster Recovery - Failback IaaS region to region
 
@@ -1400,11 +1400,11 @@ In this task, you will failback the Contoso application from the DR site in your
 
 ### Task 4: Validate VM Backup
 
-In this task, you will validate the backup for the Contoso application WebVMs. You will do this by removing several image files from **WebVM1**, breaking the Contoso application. You will then restore the VM from backup.
+In this task, you will validate the backup for the Contoso application IISVMs. You will do this by removing several image files from **IISVM1**, breaking the Contoso application. You will then restore the VM from backup.
 
-1. From the Azure portal, locate and shut down **WebVM2**. This forces all traffic to be served by **WebVM1**, making the backup/restore verification easier.
+1. From the Azure portal, locate and shut down **IISVM2**. This forces all traffic to be served by **IISVM1**, making the backup/restore verification easier.
 
-2. Navigate to **WebVM1** and connect to the VM using Azure Bastion, using username `adadmin@contoso.ins` and password `Demo!pass123`.
+2. Navigate to **IISVM1** and connect to the VM using Azure Bastion, using username `adadmin@contoso.ins` and password `Demo!pass123`.
 
 3. Open Windows Explorer and navigate to the `C:\inetpub\wwwroot\Content` folder. Select the three `.PNG` files and delete them.
 
@@ -1414,7 +1414,7 @@ In this task, you will validate the backup for the Contoso application WebVMs. Y
 
     ![Browser screenshot showing the Contoso application with missing images highlighted.](images/v-bk-web2.png "Contoso application with missing images")
 
-5. To restore WebVM1 from backup, Azure Backup requires that a 'staging' storage account be available. To create this account, in the Azure portal, select **+ Create a resource**, then search for and select **Storage account**. Select **Create**.
+5. To restore IISVM1 from backup, Azure Backup requires that a 'staging' storage account be available. To create this account, in the Azure portal, select **+ Create a resource**, then search for and select **Storage account**. Select **Create**.
 
 6. Complete the 'Create storage account' form as follows, then select **Review + Create** followed by **Create**.
 
@@ -1426,17 +1426,17 @@ In this task, you will validate the backup for the Contoso application WebVMs. Y
 
     ![Screenshot showing the 'Create storage account' blade in the Azure portal.](images/v-bk-web3.png "Create storage account")
 
-7. Before restoring a VM, the existing VM must be shut down. Use the Azure portal to shut down **WebVM1**.
+7. Before restoring a VM, the existing VM must be shut down. Use the Azure portal to shut down **IISVM1**.
 
-    > **Note**: since WebVM2 is also shut down, this will break the Contoso application. In a real-world scenario, you would keep WebVM2 running while restoring WebVM1.
+    > **Note**: since IISVM2 is also shut down, this will break the Contoso application. In a real-world scenario, you would keep IISVM2 running while restoring IISVM1.
 
 8. In the Azure portal, navigate to the **BackupRSV** Recovery Services Vault. Under 'Protected Items', select **Backup items**, then select **Azure Virtual Machine**.
 
     ![Screenshot showing the Recovery Services Vault with the links to the Azure Virtual Machine backup item highlighted.](images/v-bk-web4.png "Backup items")
 
-9. On the Backup items page, select **View details** for **WebVM1**. On the **WebVM1** page, select **RestoreVM**.
+9. On the Backup items page, select **View details** for **IISVM1**. On the **IISVM1** page, select **RestoreVM**.
 
-    ![Screenshot showing the WebVM1 backup status page, with the 'Restore VM' button highlighted.](images/v-bk-web5.png "Restore VM button")
+    ![Screenshot showing the IISVM1 backup status page, with the 'Restore VM' button highlighted.](images/v-bk-web5.png "Restore VM button")
 
 10. Complete the Restore Virtual Machine page as follows, then select **Restore**.
 
@@ -1444,19 +1444,19 @@ In this task, you will validate the backup for the Contoso application WebVMs. Y
     - **Restore Configuration**: Replace existing
     - **Staging Location**: Choose the storage account you created earlier, starting with `backupstaging`.
 
-    ![Screenshot showing settings to restore WebVM1, replacing the existing VM.](images/v-bk-web6.png "Restore VM options")
+    ![Screenshot showing settings to restore IISVM1, replacing the existing VM.](images/v-bk-web6.png "Restore VM options")
 
 11. In the **BackupRSV** vault, navigate to the **Backup Jobs** view. Note that two new jobs are shown as 'In progress', one to take a backup of the VM and a second to restore the VM.
 
-    ![Screenshot showing both backup and restore jobs for WebVM1.](images/v-bk-web7.png "Restore VM Backup Jobs")
+    ![Screenshot showing both backup and restore jobs for IISVM1.](images/v-bk-web7.png "Restore VM Backup Jobs")
 
 12. It will take several minutes for the VM to be restored. Wait for the restore to complete before proceeding with the lab.
 
-13. Once the restore operation is complete, navigate to the **WebVM1** blade in the Azure portal and **Start** the VM.
+13. Once the restore operation is complete, navigate to the **IISVM1** blade in the Azure portal and **Start** the VM.
 
 14. Wait for the VM to start, then return to your browser tab showing the Contoso application with missing images. Hold down `CTRL` and select **Refresh** to reload the page. The application is displayed with the images restored, showing the restore from backup has been successful. (As an optional step, you can also open a Bastion connection to the VM and check the deleted .PNG files have been restored.)
 
-15. Start **WebVM2**.
+15. Start **IISVM2**.
 
 ### Task 5: Validate SQL Backup
 

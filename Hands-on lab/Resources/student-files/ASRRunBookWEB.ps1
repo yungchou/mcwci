@@ -13,12 +13,12 @@ Microsoft Cloud Workshop: BCDR
  - When there is a Failover from Primary to Secondary the RecoveryPlanContext.FailoverDirection property 
    is set to: "PrimaryToSecondary".
  
- - The WEBVMs that failover to the Secondary Site will be added to the Backend Pool of the External Load Balancer.
+ - The IISVMs that failover to the Secondary Site will be added to the Backend Pool of the External Load Balancer.
 
  - When there is a Failback from Secondary to Primary the RecoveryPlanContext.FailoverDirection property 
    is set to: "SecondaryToPrimary".
  
- - The WEBVMs that failback to the Primary Site will be added to the Backend Pool of the External Load Balancer.
+ - The IISVMs that failback to the Primary Site will be added to the Backend Pool of the External Load Balancer.
 
 #>
 workflow ASRWEBFailover
@@ -69,20 +69,20 @@ Catch
 			$VNETNAME = $RP.SecondarySiteVNetName
 			$SUBNETNAME = $RP.SecondarySiteWebSubnetName
 			$VNETRG   = $RP.SecondarySiteRG
-			$WEBVM1RG = $RP.SecondarySiteRG
-			$WEBVM2RG = $RP.SecondarySiteRG
+			$IISVM1RG = $RP.SecondarySiteRG
+			$IISVM2RG = $RP.SecondarySiteRG
 
-			Write-Output "Adding WEBVMs to the External Loadbalancer at the Secondary Site..."
+			Write-Output "Adding IISVMs to the External Loadbalancer at the Secondary Site..."
 			$vnet = Get-AzVirtualNetwork -Name $VNETNAME -ResourceGroupName $VNETRG
 			$subnet = Get-AzVirtualNetworkSubnetConfig -Name $SUBNETNAME -VirtualNetwork $vnet
 			$loadBalancer = Get-AzLoadBalancer -Name $LBNAME -ResourceGroupName $VNETRG
-			$WEBVM1NIC = Get-AzNetworkInterface -ResourceGroupName $WEBVM1RG | Where-Object {$_.Name -like 'WebVM1*'}
-			$WEBVM1NIC | Set-AzNetworkInterfaceIpConfig -Name $WEBVM1NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
-			$WEBVM1NIC | Set-AzNetworkInterface
-			$WEBVM2NIC = Get-AzNetworkInterface -ResourceGroupName $WEBVM2RG | Where-Object {$_.Name -like 'WebVM2*'}
-			$WEBVM2NIC | Set-AzNetworkInterfaceIpConfig -Name $WEBVM2NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
-			$WEBVM2NIC | Set-AzNetworkInterface
-			Write-output "The WEBVMs have been added to the External Loadbalancer at the Secondary Site..."
+			$IISVM1NIC = Get-AzNetworkInterface -ResourceGroupName $IISVM1RG | Where-Object {$_.Name -like 'IISVM1*'}
+			$IISVM1NIC | Set-AzNetworkInterfaceIpConfig -Name $IISVM1NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
+			$IISVM1NIC | Set-AzNetworkInterface
+			$IISVM2NIC = Get-AzNetworkInterface -ResourceGroupName $IISVM2RG | Where-Object {$_.Name -like 'IISVM2*'}
+			$IISVM2NIC | Set-AzNetworkInterfaceIpConfig -Name $IISVM2NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
+			$IISVM2NIC | Set-AzNetworkInterface
+			Write-output "The IISVMs have been added to the External Loadbalancer at the Secondary Site..."
 
 		}
     }
@@ -94,20 +94,20 @@ Catch
 			$VNETNAME = $RP.PrimarySiteVNetName
 			$SUBNETNAME = $RP.PrimarySiteWebSubnetName
 			$VNETRG   = $RP.PrimarySiteRG
-			$WEBVM1RG = $RP.PrimarySiteRG
-			$WEBVM2RG = $RP.PrimarySiteRG
+			$IISVM1RG = $RP.PrimarySiteRG
+			$IISVM2RG = $RP.PrimarySiteRG
 
-			Write-Output "Adding WebVMs to the External Loadbalancer at the Primary Site..."
+			Write-Output "Adding IISVMs to the External Loadbalancer at the Primary Site..."
 			$vnet = Get-AzVirtualNetwork -Name $VNETNAME -ResourceGroupName $VNETRG
 			$subnet = Get-AzVirtualNetworkSubnetConfig -Name $SUBNETNAME -VirtualNetwork $vnet
 			$loadBalancer = Get-AzLoadBalancer -Name $LBNAME -ResourceGroupName $VNETRG
-			$WEBVM1NIC = Get-AzNetworkInterface -ResourceGroupName $WEBVM1RG | Where-Object {$_.Name -like 'WebVM1*'}
-			$WEBVM1NIC | Set-AzNetworkInterfaceIpConfig -Name $WEBVM1NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
-			$WEBVM1NIC | Set-AzNetworkInterface
-			$WEBVM2NIC = Get-AzNetworkInterface -ResourceGroupName $WEBVM2RG | Where-Object {$_.Name -like 'WebVM2*'}
-			$WEBVM2NIC | Set-AzNetworkInterfaceIpConfig -Name $WEBVM2NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
-			$WEBVM2NIC | Set-AzNetworkInterface
-			Write-output "The WebVMs have been added to the External Loadbalancer at the Primary Site......"
+			$IISVM1NIC = Get-AzNetworkInterface -ResourceGroupName $IISVM1RG | Where-Object {$_.Name -like 'IISVM1*'}
+			$IISVM1NIC | Set-AzNetworkInterfaceIpConfig -Name $IISVM1NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
+			$IISVM1NIC | Set-AzNetworkInterface
+			$IISVM2NIC = Get-AzNetworkInterface -ResourceGroupName $IISVM2RG | Where-Object {$_.Name -like 'IISVM2*'}
+			$IISVM2NIC | Set-AzNetworkInterfaceIpConfig -Name $IISVM2NIC.IpConfigurations[0].Name -LoadBalancerBackendAddressPoolId $loadBalancer.BackendAddressPools.id -SubnetId $subnet.id
+			$IISVM2NIC | Set-AzNetworkInterface
+			Write-output "The IISVMs have been added to the External Loadbalancer at the Primary Site......"
 
 		}
     }

@@ -102,9 +102,9 @@ In this task, you will verify that the LabVM and Contoso sample application have
 
     ![Screenshot of the Azure portal showing the template deployment status 'Succeeded' for each template.](images/BeforeTheHOL/contoso-success1.png "Screenshot of the Azure portal showing the template deployment status Succeeded for each template")
 
-3. Once the Contoso application deployment is successful, validate the application by opening the **WebVM1** virtual machine, copying the public IP address, and navigating to the public IP address in your browser.
+3. Once the Contoso application deployment is successful, validate the application by opening the **IISVM1** virtual machine, copying the public IP address, and navigating to the public IP address in your browser.
 
-    ![Go to WebVM1 in the resource group, locate the public IP address, and copy it into your web browser.](images/BeforeTheHOL/contoso-webvmpubip.png "Copy WebVM1 public IP address")
+    ![Go to IISVM1 in the resource group, locate the public IP address, and copy it into your web browser.](images/BeforeTheHOL/contoso-IISVMpubip.png "Copy IISVM1 public IP address")
 
     ![The Contoso application window displays, showing a button for 'Current Policy Offerings.](images/BeforeTheHOL/contoso-app.png "Contoso application")
 
