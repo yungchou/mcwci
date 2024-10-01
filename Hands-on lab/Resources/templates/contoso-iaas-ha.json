@@ -46,7 +46,7 @@
         }
     },
     "variables": {
-        "vnetName": "VNet1",
+        "vnetName": "westus3-252",
         "AppsSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Apps')]",
         "DataSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Data')]",
         "ADSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Identity')]"
@@ -75,7 +75,7 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "ADVMName": {
-                        "value": "ADVM2"
+                        "value": "ci-DC2"
                     },
                     "AvailabilityZone": {
                         "value": "2"
@@ -175,7 +175,7 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "IISVMName": {
-                        "value": "IISVM2"
+                        "value": "ci-IIS2"
                     },
                     "AvailabilityZone": {
                         "value": "2"
@@ -193,7 +193,7 @@
                         "value": false
                     },
                     "SQLEndpoint": {
-                        "value": "SQLVM1"
+                        "value": "ci-SQL1"
                     },
                     "domainToJoin": {
                         "value": "[parameters('domainName')]"
@@ -224,7 +224,7 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "SqlVMName": {
-                        "value": "SQLVM2"
+                        "value": "ci-SQL2"
                     },
                     "AvailabilityZone": {
                         "value": "2"

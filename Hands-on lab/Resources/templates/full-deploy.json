@@ -28,7 +28,7 @@
         {
             "condition": "[greaterOrEquals(parameters('stage'),1)]",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
+            "apiVersion": "2017-05-10",
             "name": "linkedLabVM",
             "resourceGroup":"LabRG",
             "properties": {
@@ -47,7 +47,7 @@
         {
             "condition": "[greaterOrEquals(parameters('stage'),2)]",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
+            "apiVersion": "2017-05-10",
             "name": "linkedLabIaaS",
             "resourceGroup":"ContosoRG1",
             "properties": {
@@ -67,7 +67,7 @@
         {
             "condition": "[greaterOrEquals(parameters('stage'),3)]",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
+            "apiVersion": "2017-05-10",
             "name": "linkedContosoIaasHA",
             "resourceGroup":"ContosoRG1",
             "properties": {

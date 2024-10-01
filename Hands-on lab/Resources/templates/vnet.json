@@ -19,7 +19,7 @@
   "variables": {
     "NSGName": "AppsNSG",
     "NATName": "[concat(parameters('VNetName'), 'NAT')]",
-    "NATIPName": "[concat(variables('NATName'), 'IP')]",
+    "NATIPName": "[concat(variables('NATName'), 'PIP')]",
     "VNetPrefix": "10.252.0.0/16",
     "AppsSubnetName": "Apps",
     "AppsSubnetPrefix": "10.252.1.0/24",
@@ -58,7 +58,7 @@
       }
     },
     {
-      "type": "Microsoft.Network/publicIpAddresses",
+      "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2019-02-01",
       "name": "[variables('NATIPName')]",
       "location": "[resourceGroup().location]",

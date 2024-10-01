@@ -779,7 +779,7 @@ This task comprises the following steps:
     ```Powershell
     $ClusterNetworkName = "Cluster Network 2"
     $IPResourceName = "BCDRAOG_10.1.2.100"
-    $ILBIP = "10.1.2.100"
+    $ILBIP = "10.253.2.100"
     Import-Module FailoverClusters
     Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{"Address"="$ILBIP";"ProbePort"="59999";"SubnetMask"="255.255.255.255";"Network"="$ClusterNetworkName";"EnableDhcp"=0}
     Stop-ClusterResource -Name $IPResourceName

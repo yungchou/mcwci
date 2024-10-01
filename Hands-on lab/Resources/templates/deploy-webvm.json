@@ -2,18 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "skuSizeVM": {
-      "defaultValue": "D2s_v3",
-      "type": "string",
-      "metadata": {
-        "description": "Size of Virtual Machines to use"
-      },
-      "allowedValues": [
-        "D2s_v3",
-        "D2s_v5",
-        "DC2s_v3"
-      ]
-    },
+        "skuSizeVM": {
+            "defaultValue": "E2bds_v5",
+            "type": "string",
+            "metadata": { "description": "Size of Virtual Machines to use" },
+            "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
+         },
     "IISVMName": {
       "type": "string",
       "defaultValue": "IISVM1",
@@ -88,10 +82,10 @@
     "WebScriptDownload": "[concat('powershell -ExecutionPolicy Unrestricted \"[Net.ServicePointManager]::SecurityProtocol = ''Tls12''; Invoke-WebRequest -uri ', variables('WebScriptUrl') ,' -OutFile ', variables('WebScriptFileName'), ' \"')]",
     "IISVMImagePublisher": "MicrosoftWindowsServer",
     "IISVMImageOffer": "WindowsServer",
-    "WebSKU": "2019-Datacenter",
+    "WebSKU": "2022-Datacenter",
     "IISVMSize": "[concat('Standard_',parameters('skuSizeVM'))]",
     "IISVMNicName": "[concat(parameters('IISVMName'), 'NIC')]",
-    "IISVMOSDiskName": "[concat(parameters('IISVMName'), 'OSDisk')]",
+    "IISVMOSDiskName": "[concat(parameters('IISVMName'), '-OSDisk')]",
     "IISVMIPName": "[concat(parameters('IISVMName'), 'IP')]",
     "DiskType": "Premium_LRS",
     "domainOUPath": "",
@@ -182,7 +176,9 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('IISVMNicName'))]"
             }
           ]
-        }
+        },
+        "priority": "Spot",
+        "evictionPolicy": "Deallocate"
       },
       "resources": [
         {

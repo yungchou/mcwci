@@ -2,18 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "skuSizeVM": {
-      "defaultValue": "D2s_v3",
-      "type": "string",
-      "metadata": {
-        "description": "Size of Virtual Machines to use"
-      },
-      "allowedValues": [
-        "D2s_v3",
-        "D2s_v5",
-        "DC2s_v3"
-      ]
-    },
+        "skuSizeVM": {
+            "defaultValue": "E2bds_v5",
+            "type": "string",
+            "metadata": { "description": "Size of Virtual Machines to use" },
+            "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
+         },
     "ADVMName": {
       "type": "string",
       "metadata": {
@@ -78,12 +72,12 @@
   "variables": {
     "ADVMImagePublisher": "MicrosoftWindowsServer",
     "ADVMImageOffer": "WindowsServer",
-    "ADVMWindowsOSVersion": "2019-Datacenter",
-    "ADVMOSDiskName": "[concat(parameters('ADVMName'), 'OSDisk')]",
-    "ADVMDataDiskName": "[concat(parameters('ADVMName'), 'DataDisk1')]",
+    "ADVMWindowsOSVersion": "2022-Datacenter",
+    "ADVMOSDiskName": "[concat(parameters('ADVMName'), '-OSDisk')]",
+    "ADVMDataDiskName": "[concat(parameters('ADVMName'), '-DataDisk1')]",
     "DiskType": "Premium_LRS",
     "ADVMVmSize": "[concat('Standard_',parameters('skuSizeVM'))]",
-    "ADVMNicName": "[concat(parameters('ADVMName'), 'NIC')]",
+    "ADVMNicName": "[concat(parameters('ADVMName'), '-NIC')]",
     "scriptBase": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'scripts/')]",
     "scriptFileName": "[if(parameters('newDomain'), 'deploy-advm-new.ps1', 'deploy-advm-existing.ps1')]",
     "pauseFileName": "deploy-hold-vm-new.ps1",
@@ -169,7 +163,9 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('ADVMNicName'))]"
             }
           ]
-        }
+        },
+        "priority": "Spot",
+        "evictionPolicy": "Deallocate"
       },
       "resources": [
         {

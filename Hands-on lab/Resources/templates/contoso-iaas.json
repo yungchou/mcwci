@@ -39,7 +39,7 @@
         }
     },
     "variables": {
-        "vnetName": "VNet1"
+        "vnetName": "westus3-252"
     },
     "resources": [
         {
@@ -85,9 +85,8 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "ADVMName": {
-                        "value": "ADVM1"
-                    },
-                    "AvailabilityZone": {
+                        "value": "ci-DC1"
+                    },                    "AvailabilityZone": {
                         "value": "1"
                     },
                     "ADSubnetId": {
@@ -157,7 +156,7 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "IISVMName": {
-                        "value": "IISVM1"
+                        "value": "ci-IIS1"
                     },
                     "AvailabilityZone": {
                         "value": "1"
@@ -175,7 +174,7 @@
                         "value": true
                     },
                     "SQLEndpoint": {
-                        "value": "SQLVM1"
+                        "value": "ci-SQL1"
                     },
                     "domainToJoin": {
                         "value": "[parameters('domainName')]"
@@ -207,7 +206,7 @@
                         "value": "[parameters('resourceFolder')]"
                     },
                     "SqlVMName": {
-                        "value": "SQLVM1"
+                        "value": "ci-SQL1"
                     },
                     "AvailabilityZone": {
                         "value": "1"
@@ -233,7 +232,7 @@
         {
             "name": "Bastion",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
+            "apiVersion": "2017-05-10",
             "dependsOn": [
                 "Microsoft.Resources/deployments/VirtualNetworkWithDNS"
             ],
