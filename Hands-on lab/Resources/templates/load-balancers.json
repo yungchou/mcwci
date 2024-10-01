@@ -39,7 +39,7 @@
     "Rule1433": "1433",
     "Probe59999": "59999",
     "ExternalLoadBalancerPublicIPName": "[concat(variables('ExternalLoadBalancerName'), '-PIP')]",
-    "ExternalLoadBalancerPublicIPDNSName": "ci252"
+    "ExternalLoadBalancerPublicIPDNSName": "ci33"
   },
   "resources": [
     {

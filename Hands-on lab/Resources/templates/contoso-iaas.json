@@ -39,7 +39,7 @@
         }
     },
     "variables": {
-        "vnetName": "westus3-252"
+        "vnetName": "w3-33"
     },
     "resources": [
         {
@@ -93,7 +93,7 @@
                         "value": "[reference('VirtualNetwork').outputs.ADSubnetId.value]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.252.3.100"
+                        "value": "10.33.3.100"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"

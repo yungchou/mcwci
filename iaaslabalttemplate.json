@@ -39,8 +39,8 @@
         }
     },
     "variables": {
-        "vnetNamePrimary": "westus3-252",
-        "vnetNameSecondary": "westus2-253",
+        "vnetNamePrimary": "w3-33",
+        "vnetNameSecondary": "w2-22",
         "baseUri": "https://cloudworkshop.blob.core.windows.net/building-resilient-iaas-architecture/lab-resources/june-2020-update/"
     },
     "resources": [
@@ -108,8 +108,8 @@
                     },
                     "DNSIPs": {
                         "value": [
-                            "10.252.3.100",
-                            "10.252.3.101"
+                            "10.33.3.100",
+                            "10.33.3.101"
                         ]
                     }
                 }
@@ -140,7 +140,7 @@
                         "value": "[reference('VirtualNetworkSecondary').outputs.ADSubnetId.value]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.253.3.100"
+                        "value": "10.22.3.100"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -182,7 +182,7 @@
                         "value": "[reference('VirtualNetworkSecondary').outputs.ADSubnetId.value]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.253.3.101"
+                        "value": "10.22.3.101"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -220,8 +220,8 @@
                     },
                     "DNSIPs": {
                         "value": [
-                            "10.253.3.100",
-                            "10.253.3.101"
+                            "10.22.3.100",
+                            "10.22.3.101"
                         ]
                     }
                 }
@@ -248,7 +248,7 @@
                         "value": "[reference('VirtualNetworkSecondary').outputs.DataSubnetId.value]"
                     },
                     "SQLLBPrivateIPAddress": {
-                        "value": "10.253.2.100"
+                        "value": "10.22.2.100"
                     }
                 }
             }
