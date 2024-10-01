@@ -175,7 +175,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-WebVM.json')]",
+                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-webvm.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
