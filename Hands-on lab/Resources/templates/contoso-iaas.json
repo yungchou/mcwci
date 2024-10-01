@@ -52,9 +52,9 @@
         "stub": "[parameters('sessionID')]",
         "vnetName": "[concat('vnet-',variables('stub'))]",
         "ADVMPrivateIPAddress": "[concat('10.',parameters('sessionID'),'.3.100')]",
-        "DCVMName": "[concat('ci',variabes('stub'),'-DC',parameters('zone'))]",
-        "IISVMName": "[concat('ci',variabes('stub'),'-IIS',parameters('zone'))]",
-        "SQLVMName": "[concat('ci',variabes('stub'),'-SQL',parameters('zone'))]"
+        "DCVMName": "[concat('ci',variables('stub'),'-DC',parameters('zone'))]",
+        "IISVMName": "[concat('ci',variables('stub'),'-IIS',parameters('zone'))]",
+        "SQLVMName": "[concat('ci',variables('stub'),'-SQL',parameters('zone'))]"
     },
     "resources": [
         {
