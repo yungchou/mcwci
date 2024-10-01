@@ -1,6 +1,6 @@
 param($zipurl, $datasource="keep-default", $password="keep-default")
 
-Start-Transcript "C:\deploy-IISVM-log.txt"
+Start-Transcript "C:\deploy-WebVM-log.txt"
 
 # Install IIS
 Install-WindowsFeature -Name "web-server" `

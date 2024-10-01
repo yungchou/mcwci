@@ -2,6 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "sessionID": { 
+            "defaultValue": "248", 
+            "type": "string", 
+            "metadata": { "description": "between 1 and 255" } 
+        },
         "skuSizeVM": {
             "defaultValue": "E2bds_v5",
             "type": "string",
@@ -39,7 +44,8 @@
         }
     },
     "variables": {
-        "vnetName": "vnet-248"
+        "stub": "[parameters('sessionID')]",
+        "vnetName": "[concat('vnet-',variables('stub'))]"
     },
     "resources": [
         {
@@ -55,9 +61,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "VNetName": {
-                        "value": "[variables('vnetName')]"
-                    }
+                    "sessionID": { "value": "[variables('stub')]" },
+                    "VNetName": { "value": "[variables('vnetName')]" }
                 }
             }
         },

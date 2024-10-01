@@ -2,6 +2,18 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "sessionID": { 
+            "defaultValue": "248", 
+            "type": "string", 
+            "metadata": { "description": "between 1 and 255" } 
+        },
+        "existingDNSServer": {
+            "type": "string",
+            "defaultValue": "10.248.3.100",
+            "metadata": {
+                "description": "Existing DNS server in Virtual Network"
+            }
+        },
         "skuSizeVM": {
             "defaultValue": "E2bds_v5",
             "type": "string",
@@ -29,13 +41,6 @@
                 "description": "The FQDN of the Active Directory Domain to be created"
             }
         },
-        "existingDNSServer": {
-            "type": "string",
-            "defaultValue": "10.248.3.100",
-            "metadata": {
-                "description": "Existing DNS server in Virtual Network"
-            }
-        },
         "baseUri": {
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/yungchou/mcwci/"
@@ -46,10 +51,13 @@
         }
     },
     "variables": {
-        "vnetName": "vnet-248",
+        "stub": "[parameters('sessionID')]",
+        "vnetName": "[concat('vnet-',variables('stub'))]",
         "AppsSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Apps')]",
         "DataSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Data')]",
-        "ADSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Identity')]"
+        "ADSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Identity')]",
+        "ADVMPrivateIPAddress": "[concat('10.',variables('stub'),'.3.101')]",
+        "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'.2.100')]"
     },
     "resources": [
         {
@@ -84,7 +92,7 @@
                         "value": "[variables('ADSubnetId')]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.248.3.101"
+                        "value": "[variables('ADVMPrivateIPAddress')]"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -120,9 +128,7 @@
                     "DataSubnetId": {
                         "value": "[variables('DataSubnetId')]"
                     },
-                    "SQLLBPrivateIPAddress": {
-                        "value": "10.248.2.100"
-                    }
+                    "SQLLBPrivateIPAddress": "[variables('SQLLBPrivateIPAddress')]"
                 }
             }
         },

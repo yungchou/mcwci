@@ -75,9 +75,9 @@
   },
   "variables": {
     "WebDownloadUrl": "[concat(parameters('baseUri'),parameters('resourceFolder'),'application/ContosoInsuranceIIS.zip')]",
-    "WebScriptUrl": "[concat(parameters('baseUri'),parameters('resourceFolder'),'scripts/deploy-IISVM.ps1')]",
+    "WebScriptUrl": "[concat(parameters('baseUri'),parameters('resourceFolder'),'scripts/deploy-WebVM.ps1')]",
     "ScriptFolder": "[concat('./',parameters('resourceFolder'),'scripts/')]",
-    "WebScriptFileName": "deploy-IISVM.ps1",
+    "WebScriptFileName": "deploy-WebVM.ps1",
     "WebScriptParameters": "[concat(' -zipurl ', variables('WebDownloadUrl'), ' -datasource ', parameters('SQLEndpoint'), '.', parameters('domainToJoin'), ' -password ', parameters('adminPassword'))]",
     "WebScriptDownload": "[concat('powershell -ExecutionPolicy Unrestricted \"[Net.ServicePointManager]::SecurityProtocol = ''Tls12''; Invoke-WebRequest -uri ', variables('WebScriptUrl') ,' -OutFile ', variables('WebScriptFileName'), ' \"')]",
     "IISVMImagePublisher": "MicrosoftWindowsServer",

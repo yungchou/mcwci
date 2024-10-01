@@ -2,6 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "sessionID": { 
+            "defaultValue": "252", 
+            "type": "string", 
+            "metadata": { "description": "between 1 and 255" } 
+        },
         "skuSizeVM": {
             "defaultValue": "E2bds_v5",
             "type": "string",
@@ -36,6 +41,17 @@
                 "description": "Resource group name of the primary region (must already exist)"
             }
         },
+        "existingPrimaryVnet": {
+            "defaultValue": "vnet-248",
+            "type": "string"    
+        },
+        "existingDNSIPs": {
+            "defaultValue": ["10.248.3.100","10.248.3.101"],
+            "type": "array" ,
+            "metadata": {
+                "description": "DNS IPs referenced in the existing primary vnet"
+            }  
+        },
         "SecondaryRG": {
             "type": "string",
             "defaultValue": "ContosoRG2",
@@ -53,8 +69,10 @@
         }
     },
     "variables": {
-        "vnetNamePrimary": "vnet-248",
-        "vnetNameSecondary": "vnet-252"
+        "stub": "[parameters('sessionID')]",
+        "vnetNamePrimary": "[parameters('existingPrimaryVnet')]",
+        "vnetNameSecondary": "[concat('vnet-',variables('stub'))]",
+        "DNSIPs": "[parameters('existingDNSIPs')]" 
     },
     "resources": [
         {
@@ -72,7 +90,9 @@
                 },
                 "parameters": {
                     "VNetName": {
+                        "sessionID": { "value": "[variables('stub')]" },
                         "value": "[variables('vnetNameSecondary')]"
+    
                     }
                 }
             }
@@ -106,9 +126,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "resourceGroup": "[parameters('SecondaryRG')]",
-            "dependsOn": [
-                "Peering"
-            ],
+            "dependsOn": [ "Peering" ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -116,15 +134,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "VNetName": {
-                        "value": "[variables('vnetNameSecondary')]"
-                    },
-                    "DNSIPs": {
-                        "value": [
-                            "10.248.3.100",
-                            "10.248.3.101"
-                        ]
-                    }
+                    "VNetName": { "value": "[variables('vnetNameSecondary')]" },
+                    "DNSIPs": { "value": "[variables('DNSIPs')]" }
                 }
             }
         },
@@ -133,9 +144,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "resourceGroup": "[parameters('SecondaryRG')]",
-            "dependsOn": [
-                "VirtualNetworkSecondaryWithPrimaryDNS"
-            ],
+            "dependsOn": [ "VirtualNetworkSecondaryWithPrimaryDNS" ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
