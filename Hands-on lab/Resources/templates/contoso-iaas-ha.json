@@ -21,7 +21,7 @@
             "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
          },
          "zone": {
-            "defaultValue": ["2"],
+            "defaultValue": "2",
             "type": "array",
             "allowedValues": [ "1","2","3" ]
          },
