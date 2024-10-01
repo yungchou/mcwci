@@ -161,7 +161,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-IISVM.json')]",
+                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-WebVM.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
