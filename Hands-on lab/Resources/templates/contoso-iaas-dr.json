@@ -53,8 +53,8 @@
         }
     },
     "variables": {
-        "vnetNamePrimary": "w3-33",
-        "vnetNameSecondary": "w2-22"
+        "vnetNamePrimary": "vnet-248",
+        "vnetNameSecondary": "vnet-252"
     },
     "resources": [
         {
@@ -121,8 +121,8 @@
                     },
                     "DNSIPs": {
                         "value": [
-                            "10.33.3.100",
-                            "10.33.3.101"
+                            "10.248.3.100",
+                            "10.248.3.101"
                         ]
                     }
                 }
@@ -162,7 +162,7 @@
                         "value": "[reference('VirtualNetworkSecondary').outputs.ADSubnetId.value]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.22.3.100"
+                        "value": "10.252.3.100"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -213,7 +213,7 @@
                         "value": "[reference('VirtualNetworkSecondary').outputs.ADSubnetId.value]"
                     },
                     "ADVMPrivateIPAddress": {
-                        "value": "10.22.3.101"
+                        "value": "10.252.3.101"
                     },
                     "adminUserName": {
                         "value": "[parameters('adminUserName')]"
@@ -251,8 +251,8 @@
                     },
                     "DNSIPs": {
                         "value": [
-                            "10.22.3.100",
-                            "10.22.3.101"
+                            "10.252.3.100",
+                            "10.252.3.101"
                         ]
                     }
                 }
@@ -279,7 +279,7 @@
                         "value": "[reference('VirtualNetworkSecondary').outputs.DataSubnetId.value]"
                     },
                     "SQLLBPrivateIPAddress": {
-                        "value": "10.22.2.100"
+                        "value": "10.252.2.100"
                     }
                 }
             }
