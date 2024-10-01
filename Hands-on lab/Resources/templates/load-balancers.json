@@ -4,7 +4,7 @@
   "parameters": {
     "WebLBDnsLabelPrefix": {
       "type": "string",
-      "defaultValue": "contoso-",
+      "defaultValue": "ci-",
       "minLength": 1
     },
     "Environment": {
@@ -28,14 +28,18 @@
     }
   },
   "variables": {
-    "InternalLoadBalancerName": "[concat('ContosoSQLLB', parameters('Environment'))]",
-    "ExternalLoadBalancerName": "[concat('ContosoWebLB', parameters('Environment'))]",
-    "FrontEndName": "FrontEnd1",
-    "RuleName": "Rule1",
-    "BackEndPoolName": "BackEndPool1",
-    "ProbeName": "Probe1",
-    "ExternalLoadBalancerPublicIPName": "[concat(variables('ExternalLoadBalancerName'), 'IP')]",
-    "ExternalLoadBalancerPublicIPDNSName": "[concat(parameters('WebLBDnsLabelPrefix'), take(uniqueString(resourceGroup().id), 4))]"
+    "InternalLoadBalancerName": "[concat(parameters('Environment'),'-Internal-LB-SQL')]",
+    "ExternalLoadBalancerName": "[concat(parameters('Environment'),'-External-LB-IIS')]",
+    "FrontEndIIS": "FrontEnd-to-IIS",
+    "BackEndPoolIIS": "IIS-Pool",
+    "Rule80": "80",
+    "Probe80": "80",
+    "FrontEndSQL": "FrontEnd-to-SQL",
+    "BackEndPoolSQL": "SQL-Pool",
+    "Rule1433": "1433",
+    "Probe59999": "59999",
+    "ExternalLoadBalancerPublicIPName": "[concat(variables('ExternalLoadBalancerName'), '-PIP')]",
+    "ExternalLoadBalancerPublicIPDNSName": "ci252"
   },
   "resources": [
     {
@@ -71,7 +75,7 @@
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "[variables('FrontEndName')]",
+            "name": "[variables('FrontEndIIS')]",
             "properties": {
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ExternalLoadBalancerPublicIPName'))]"
@@ -81,12 +85,12 @@
         ],
         "backendAddressPools": [
           {
-            "name": "[variables('BackEndPoolName')]"
+            "name": "[variables('BackEndPoolIISe')]"
           }
         ],
         "loadBalancingRules": [
           {
-            "name": "[variables('RuleName')]",
+            "name": "[variables('Rule80')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('ExternalLoadBalancerName'), variables('FrontEndName'))]"
@@ -97,7 +101,7 @@
               "probe": {
                 "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('ExternalLoadBalancerName'), variables('ProbeName'))]"
               },
-              "protocol": "tcp",
+              "protocol": "Tcp",
               "frontendPort": 80,
               "backendPort": 80,
               "enableFloatingIP": false,
@@ -107,9 +111,9 @@
         ],
         "probes": [
           {
-            "name": "[variables('ProbeName')]",
+            "name": "[variables('Probe80')]",
             "properties": {
-              "protocol": "tcp",
+              "protocol": "Tcp",
               "port": 80,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
@@ -133,7 +137,7 @@
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "[variables('FrontEndName')]",
+            "name": "[variables('FrontEndSQL')]",
             "properties": {
               "subnet": {
                 "id": "[parameters('DataSubnetId')]"
@@ -145,12 +149,12 @@
         ],
         "backendAddressPools": [
           {
-            "name": "[variables('BackEndPoolName')]"
+            "name": "[variables('BackEndPoolSQL')]"
           }
         ],
         "loadBalancingRules": [
           {
-            "name": "[variables('RuleName')]",
+            "name": "[variables('Rule1433')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('InternalLoadBalancerName'), variables('FrontEndName'))]"
@@ -171,7 +175,7 @@
         ],
         "probes": [
           {
-            "name": "[variables('ProbeName')]",
+            "name": "[variables('Probe59999')]",
             "properties": {
               "protocol": "Tcp",
               "port": 59999,

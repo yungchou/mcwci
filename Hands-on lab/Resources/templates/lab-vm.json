@@ -3,39 +3,33 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "skuSizeVM": {
-          "defaultValue": "D2s_v3",
-          "type": "string",
-          "metadata": {
-            "description": "Size of Virtual Machines to use"
-          },
-          "allowedValues": [
-            "D2s_v3",
-            "D2s_v5",
-            "DC2s_v3"
-          ]
-        },
+            "defaultValue": "E2bds_v5",
+            "type": "string",
+            "metadata": { "description": "Size of Virtual Machines to use" },
+            "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
+         },
         "adminUsername": {
             "defaultValue": "adadmin",
             "minLength": 1,
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "Username for the Virtual Machine."
             }
         },
         "adminPassword": {
             "defaultValue": "Demo!pass123",
-            "type": "SecureString",
+            "type": "securestring"
             "metadata": {
                 "description": "Password for the Virtual Machine."
             }
         },
         "studentFilesUrl": {
             "defaultValue": "https://github.com/microsoft/MCW-Building-a-resilient-IaaS-architecture/raw/master/Hands-on%20lab/Resources/student-files/studentfiles.zip",
-            "type": "String"
+            "type": "string"
         },
         "studentFilesDestination": {
             "defaultValue": "C:\\HOL",
-            "type": "String"
+            "type": "string"
         }
     },
     "variables": {
