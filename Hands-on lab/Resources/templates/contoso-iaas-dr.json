@@ -2,10 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "seed": { 
-            "defaultValue": "[utcNow('yyyyMMddHHmmss')]", 
-            "type": "string"
-        },
         "skuSizeVM": {
             "defaultValue": "E2bds_v5",
             "type": "string",
@@ -70,10 +66,16 @@
         "resourceFolder": {
             "type": "string",
             "defaultValue": "main/Hands-on%20lab/Resources/"
+        },
+        "seed": { 
+            "defaultValue": "[utcNow('yyyyMMddHHmmss')]", 
+            "type": "string"
         }
     },
     "variables": {
-        "stub": "[parameters('seed')]",
+        "min": 229,
+		"max": 248,
+		"stub": "[ add(variables('min'), mod(int(substring(parameters('seed'), 12, 2)), add(sub(variables('max'), variables('min')), 1)))]",
         "vnetNamePrimary": "[parameters('existingPrimaryVnet')]",
         "vnetNameSecondary": "[concat('vnet-',variables('stub'))]",
         "DNSIPs": "[parameters('existingDNSIPs')]",
