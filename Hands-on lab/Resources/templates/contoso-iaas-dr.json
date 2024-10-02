@@ -2,10 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sessionID": { 
-            "defaultValue": "252", 
-            "type": "string", 
-            "metadata": { "description": "between 1 and 255" } 
+        "seed": { 
+            "defaultValue": "[utcNow('yyyyMMddHHmmss')]", 
+            "type": "string"
         },
         "skuSizeVM": {
             "defaultValue": "E2bds_v5",
@@ -74,7 +73,7 @@
         }
     },
     "variables": {
-        "stub": "[parameters('sessionID')]",
+        "stub": "[parameters('seed')]",
         "vnetNamePrimary": "[parameters('existingPrimaryVnet')]",
         "vnetNameSecondary": "[concat('vnet-',variables('stub'))]",
         "DNSIPs": "[parameters('existingDNSIPs')]",
@@ -101,7 +100,7 @@
                 },
                 "parameters": {
                     "VNetName": {
-                        "sessionID": { "value": "[variables('stub')]" },
+                        "seed": { "value": "[variables('stub')]" },
                         "value": "[variables('vnetNameSecondary')]"
     
                     }

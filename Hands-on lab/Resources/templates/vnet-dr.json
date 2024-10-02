@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sessionID": { "defaultValue": "252", "type": "string" },
+    "seed": { "defaultValue": "252", "type": "string" },
     "VNetName": {
       "type": "string",
       "metadata": {
@@ -18,7 +18,7 @@
     }
   },
   "variables": {
-    "stub": "[parameters('sessionID')]",
+    "stub": "[parameters('seed')]",
     "NSGName": "[concat('AppsNSG-',variables('stub'))]",
     "NATName": "[concat(parameters('VNetName'), '-NAT')]",
     "NATIPName": "[concat(variables('NATName'), '-PIP')]",
