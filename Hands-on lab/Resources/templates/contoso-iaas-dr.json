@@ -75,7 +75,7 @@
 	"variables": {
 		"min": 229,
 		"max": 248,
-		"stub": "[ add(variables('min'), mod(int(substring(parameters('seed'), 12, 2)), add(sub(variables('max'), variables('min')), 1)))]",
+		"stub": "[string( add(variables('min'), mod(int(substring(parameters('seed'), 12, 2)), add(sub(variables('max'), variables('min')), 1))) )]",
 		"vnetNamePrimary": "[parameters('existingPrimaryVnet')]",
 		"vnetNameSecondary": "[concat('vnet-',variables('stub'))]",
 		"DNSIPs": "[parameters('existingDNSIPs')]",
