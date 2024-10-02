@@ -50,7 +50,7 @@
 	"variables": {
 		"min": 211,
 		"max": 228,
-		"stub": "[ add(variables('min'), mod(int(substring(parameters('seed'), 12, 2)), add(sub(variables('max'), variables('min')), 1)))]",
+		"stub": "[string( add(variables('min'), mod(int(substring(parameters('seed'), 12, 2)), add(sub(variables('max'), variables('min')), 1))) )]",
 		"vnetName": "[concat('vnet-',variables('stub'))]",
 		"ADVMPrivateIPAddress": "[concat('10.',variables('stub'),'.3.100')]",
 		"DCVMName": "[concat('ci',variables('stub'),'-DC',parameters('zone'))]",
