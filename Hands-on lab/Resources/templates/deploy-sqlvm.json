@@ -179,7 +179,7 @@
           "name": "JoinDomain",
           "type": "extensions",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2015-06-15",
+          "apiVersion": "2019-03-01",
           "dependsOn": [
             "[parameters('SQLVMName')]"
           ],

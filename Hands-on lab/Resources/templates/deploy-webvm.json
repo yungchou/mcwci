@@ -203,7 +203,7 @@
           "name": "JoinDomain",
           "type": "extensions",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2015-06-15",
+          "apiVersion": "2019-03-01",
           "dependsOn": [
             "[parameters('WebVMName')]",
             "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('WebVMName'), 'InstallWebApp')]"

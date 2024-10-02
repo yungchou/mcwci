@@ -1,267 +1,267 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "10.x": { 
-            "defaultValue": "248", 
-            "type": "string", 
-            "metadata": { "description": "between 1 and 255" } 
-        },
-        "existingDNSServer": {
-            "type": "string",
-            "defaultValue": "10.248.3.100",
-            "metadata": {
-                "description": "Existing DNS server in Virtual Network"
-            }
-        },
-        "skuSizeVM": {
-            "defaultValue": "E2bds_v5",
-            "type": "string",
-            "metadata": { "description": "Size of Virtual Machines to use" },
-            "allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
-         },
-         "zone": {
-            "defaultValue": "2",
-            "type": "string",
-            "allowedValues": [ "1","2","3" ]
-         },
-        "adminUsername": {
-            "type": "string",
-            "defaultValue": "adadmin",
-            "metadata": {
-                "description": "The name of the administrator account of the new VM and domain"
-            }
-        },
-        "adminPassword": {
-            "type": "securestring",
-            "defaultValue": "Demo!pass123",
-            "metadata": {
-                "description": "The password for the administrator account of the new VM and domain"
-            }
-        },
-        "domainName": {
-            "type": "string",
-            "defaultValue": "contoso.ins",
-            "metadata": {
-                "description": "The FQDN of the Active Directory Domain to be created"
-            }
-        },
-        "baseUri": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/yungchou/mcwci/"
-        },
-        "resourceFolder": {
-            "type": "string",
-            "defaultValue": "main/Hands-on%20lab/Resources/"
-        }
-    },
-    "variables": {
-        "stub": "[parameters('10.x')]",
-        "vnetName": "[concat('vnet-',variables('stub'))]",
-        "AppsSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Apps')]",
-        "DataSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Data')]",
-        "ADSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Identity')]",
-        "ADVMPrivateIPAddress": "[concat('10.',variables('stub'),'.3.101')]",
-        "SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'.2.100')]",
-        "DCVMName": "[concat('ci',variables('stub'),'-DC',parameters('zone'))]",
-        "IISVMName": "[concat('ci',variables('stub'),'-IIS',parameters('zone'))]",
-        "SQLVMName": "[concat('ci',variables('stub'),'-SQL',parameters('zone'))]"
-    },
-    "resources": [
-        {
-            "name": "ADVM2",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
-            "dependsOn": [
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-advm.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "skuSizeVM": {
-                        "value": "[parameters('skuSizeVM')]"
-                    },
-                    "baseUri": {
-                        "value": "[parameters('baseUri')]"
-                    },
-                    "resourceFolder": {
-                        "value": "[parameters('resourceFolder')]"
-                    },
-                    "ADVMName": {
-                        "value": "[variables('DCVMName')]"
-                    },
-                    "AvailabilityZone": {
-                        "value": "[parameters('zone')]"
-                    },
-                    "ADSubnetId": {
-                        "value": "[variables('ADSubnetId')]"
-                    },
-                    "ADVMPrivateIPAddress": {
-                        "value": "[variables('ADVMPrivateIPAddress')]"
-                    },
-                    "adminUserName": {
-                        "value": "[parameters('adminUserName')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "domainName": {
-                        "value": "[parameters('domainName')]"
-                    },
-                    "newDomain": {
-                        "value": false
-                    }
-                }
-            }
-        },
-        {
-            "name": "LoadBalancers",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
-            "dependsOn": [
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/load-balancers.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "Environment": {
-                        "value": "Primary"
-                    },
-                    "DataSubnetId": {
-                        "value": "[variables('DataSubnetId')]"
-                    },
-                    "SQLLBPrivateIPAddress": "[variables('SQLLBPrivateIPAddress')]"
-                }
-            }
-        },
-        {
-            "name": "VirtualNetworkWithDNS",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
-            "dependsOn": [
-                "Microsoft.Resources/deployments/ADVM2"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/vnet.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "VNetName": {
-                        "value": "[variables('vnetName')]"
-                    },
-                    "DNSIPs": {
-                        "value": [
-                            "[parameters('existingDNSServer')]",
-                            "[reference('ADVM2').outputs.ADVM1PrivateIP.value]"
-                        ]
-                    }
-                }
-            }
-        },
-        {
-            "name": "WebVM2",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
-            "dependsOn": [
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-webvm.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "skuSizeVM": {
-                        "value": "[parameters('skuSizeVM')]"
-                    },
-                    "baseUri": {
-                        "value": "[parameters('baseUri')]"
-                    },
-                    "resourceFolder": {
-                        "value": "[parameters('resourceFolder')]"
-                    },
-                    "WebVMName": {
-                        "value": "[variables('IISVMName')]"
-                    },
-                    "AvailabilityZone": {
-                        "value": "[parameters('zone')]"
-                    },
-                    "adminUserName": {
-                        "value": "[parameters('adminUserName')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "AppsSubnetId": {
-                        "value": "[variables('AppsSubnetId')]"
-                    },
-                    "PublicIP": {
-                        "value": false
-                    },
-                    "SQLEndpoint": {
-                        "value": "[variables('SQLVMName')]"
-                    },
-                    "domainToJoin": {
-                        "value": "[parameters('domainName')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "SQLVM2",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
-            "dependsOn": [
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-sqlvm.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "skuSizeVM": {
-                        "value": "[parameters('skuSizeVM')]"
-                    },
-                    "baseUri": {
-                        "value": "[parameters('baseUri')]"
-                    },
-                    "resourceFolder": {
-                        "value": "[parameters('resourceFolder')]"
-                    },
-                    "SqlVMName": {
-                        "value": "[variables('SQLVMName')]"
-                    },
-                    "AvailabilityZone": {
-                        "value": "[parameters('zone')]"
-                    },
-                    "adminUserName": {
-                        "value": "[parameters('adminUserName')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "DataSubnetId": {
-                        "value": "[variables('DataSubnetId')]"
-                    },
-                    "domainToJoin": {
-                        "value": "[parameters('domainName')]"
-                    },
-                    "SQLDownloadUrl": {
-                        "value": "[concat(parameters('baseUri'),parameters('resourceFolder'), 'application/ContosoInsurance.bak')]"
-                    }
-                }
-            }
-        }
-    ],
-    "outputs": {
-    }
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"10.x": { 
+			"defaultValue": "248", 
+			"type": "string", 
+			"metadata": { "description": "between 1 and 255" } 
+		},
+		"existingDNSServer": {
+			"type": "string",
+			"defaultValue": "10.248.3.100",
+			"metadata": {
+				"description": "Existing DNS server in Virtual Network"
+			}
+		},
+		"skuSizeVM": {
+			"defaultValue": "E2bds_v5",
+			"type": "string",
+			"metadata": { "description": "Size of Virtual Machines to use" },
+			"allowedValues": [ "D2s_v3","D2s_v5","E2ads_v5","E2as_v5","E2bds_v5","E2bs_v5" ]
+		 },
+		 "zone": {
+			"defaultValue": "2",
+			"type": "string",
+			"allowedValues": [ "1","2","3" ]
+		 },
+		"adminUsername": {
+			"type": "string",
+			"defaultValue": "adadmin",
+			"metadata": {
+				"description": "The name of the administrator account of the new VM and domain"
+			}
+		},
+		"adminPassword": {
+			"type": "securestring",
+			"defaultValue": "Demo!pass123",
+			"metadata": {
+				"description": "The password for the administrator account of the new VM and domain"
+			}
+		},
+		"domainName": {
+			"type": "string",
+			"defaultValue": "contoso.ins",
+			"metadata": {
+				"description": "The FQDN of the Active Directory Domain to be created"
+			}
+		},
+		"baseUri": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/yungchou/mcwci/"
+		},
+		"resourceFolder": {
+			"type": "string",
+			"defaultValue": "main/Hands-on%20lab/Resources/"
+		}
+	},
+	"variables": {
+		"stub": "[parameters('10.x')]",
+		"vnetName": "[concat('vnet-',variables('stub'))]",
+		"AppsSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Apps')]",
+		"DataSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Data')]",
+		"ADSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'Identity')]",
+		"ADVMPrivateIPAddress": "[concat('10.',variables('stub'),'.3.101')]",
+		"SQLLBPrivateIPAddress": "[concat('10.',variables('stub'),'.2.100')]",
+		"DCVMName": "[concat('ci',variables('stub'),'-DC',parameters('zone'))]",
+		"IISVMName": "[concat('ci',variables('stub'),'-IIS',parameters('zone'))]",
+		"SQLVMName": "[concat('ci',variables('stub'),'-SQL',parameters('zone'))]"
+	},
+	"resources": [
+		{
+			"name": "ADVM2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2016-09-01",
+			"dependsOn": [
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-advm.json')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"skuSizeVM": {
+						"value": "[parameters('skuSizeVM')]"
+					},
+					"baseUri": {
+						"value": "[parameters('baseUri')]"
+					},
+					"resourceFolder": {
+						"value": "[parameters('resourceFolder')]"
+					},
+					"ADVMName": {
+						"value": "[variables('DCVMName')]"
+					},
+					"AvailabilityZone": {
+						"value": "[parameters('zone')]"
+					},
+					"ADSubnetId": {
+						"value": "[variables('ADSubnetId')]"
+					},
+					"ADVMPrivateIPAddress": {
+						"value": "[variables('ADVMPrivateIPAddress')]"
+					},
+					"adminUserName": {
+						"value": "[parameters('adminUserName')]"
+					},
+					"adminPassword": {
+						"value": "[parameters('adminPassword')]"
+					},
+					"domainName": {
+						"value": "[parameters('domainName')]"
+					},
+					"newDomain": {
+						"value": false
+					}
+				}
+			}
+		},
+		{
+			"name": "LoadBalancers",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2016-09-01",
+			"dependsOn": [
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/load-balancers.json')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"Environment": {
+						"value": "Primary"
+					},
+					"DataSubnetId": {
+						"value": "[variables('DataSubnetId')]"
+					},
+					"SQLLBPrivateIPAddress": "[variables('SQLLBPrivateIPAddress')]"
+				}
+			}
+		},
+		{
+			"name": "VirtualNetworkWithDNS",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2016-09-01",
+			"dependsOn": [
+				"Microsoft.Resources/deployments/ADVM2"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/vnet.json')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"VNetName": {
+						"value": "[variables('vnetName')]"
+					},
+					"DNSIPs": {
+						"value": [
+							"[parameters('existingDNSServer')]",
+							"[reference('ADVM2').outputs.ADVM1PrivateIP.value]"
+						]
+					}
+				}
+			}
+		},
+		{
+			"name": "WebVM2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2016-09-01",
+			"dependsOn": [
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-webvm.json')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"skuSizeVM": {
+						"value": "[parameters('skuSizeVM')]"
+					},
+					"baseUri": {
+						"value": "[parameters('baseUri')]"
+					},
+					"resourceFolder": {
+						"value": "[parameters('resourceFolder')]"
+					},
+					"WebVMName": {
+						"value": "[variables('IISVMName')]"
+					},
+					"AvailabilityZone": {
+						"value": "[parameters('zone')]"
+					},
+					"adminUserName": {
+						"value": "[parameters('adminUserName')]"
+					},
+					"adminPassword": {
+						"value": "[parameters('adminPassword')]"
+					},
+					"AppsSubnetId": {
+						"value": "[variables('AppsSubnetId')]"
+					},
+					"PublicIP": {
+						"value": false
+					},
+					"SQLEndpoint": {
+						"value": "[variables('SQLVMName')]"
+					},
+					"domainToJoin": {
+						"value": "[parameters('domainName')]"
+					}
+				}
+			}
+		},
+		{
+			"name": "SQLVM2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2016-09-01",
+			"dependsOn": [
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('baseUri'), parameters('resourceFolder'), 'templates/deploy-sqlvm.json')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"skuSizeVM": {
+						"value": "[parameters('skuSizeVM')]"
+					},
+					"baseUri": {
+						"value": "[parameters('baseUri')]"
+					},
+					"resourceFolder": {
+						"value": "[parameters('resourceFolder')]"
+					},
+					"SqlVMName": {
+						"value": "[variables('SQLVMName')]"
+					},
+					"AvailabilityZone": {
+						"value": "[parameters('zone')]"
+					},
+					"adminUserName": {
+						"value": "[parameters('adminUserName')]"
+					},
+					"adminPassword": {
+						"value": "[parameters('adminPassword')]"
+					},
+					"DataSubnetId": {
+						"value": "[variables('DataSubnetId')]"
+					},
+					"domainToJoin": {
+						"value": "[parameters('domainName')]"
+					},
+					"SQLDownloadUrl": {
+						"value": "[concat(parameters('baseUri'),parameters('resourceFolder'), 'application/ContosoInsurance.bak')]"
+					}
+				}
+			}
+		}
+	],
+	"outputs": {
+	}
 }
